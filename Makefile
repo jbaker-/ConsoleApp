@@ -1,6 +1,6 @@
 #flags
 CC=g++
-CFLAGS=-c -Wall
+CFLAGS=-c -Wall -g
 
 all: ConsoleApp
 

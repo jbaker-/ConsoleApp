@@ -10,44 +10,71 @@ using namespace std;
 
 struct voxel{
 	int id;
+	float temperature;
 };
 
 voxel space[X_DIM][Y_DIM][Z_DIM];
 
 void seed(int seed){
-	if(seed == 3){
-		float result;
-		srand(X_DIM*Y_DIM*Z_DIM);
-		cout << "random seeding begins" << endl;
-		for(int k = Z_DIM; k > 0; k--){
-			for(int j = Y_DIM; j > 0; j--){
-				for(int i = 0; i < X_DIM; i++){
-					result = rand() / RAND_MAX;
+	
+	switch(seed){
+		case 4:
+			cout << "seeding edges with 1 / interior with 0" << endl;
+			for(int k = Z_DIM; k > 0; k--){
+				for(int j = Y_DIM; j > 0; j--){
+					for(int i = 0; i < X_DIM; i++){
+						if (k==1 || k==Z_DIM ||
+							j==1 || j==Y_DIM ||
+							i==0 || i==X_DIM-1){
 
-					if(result >= 0.5){
-						space[i][j][k].id = 1;
-					}else{
-						space[i][j][k].id = 0;
+							space[i][j][k].id = 1;
+							space[i][j][k].temperature = 100.0;
+						}else{
+							space[i][j][k].id = 0;
+							space[i][j][k].temperature = 0.0;
+						}
+						cout << "[" << space[i][j][k].id << "]";
 					}
-					cout << space[i][j][k].id << "]";
+					cout << "line " << j << " completed successfully" << endl;
 				}
-				cout << "line " << j << " completed successfully" << endl;
+				cout << "end of slice " << k << endl;
 			}
-			cout << "end of slice " << k << endl;
-		}
-	}else{
-		cout << "seeding begins" << endl;
-		for(int k = Z_DIM; k > 0; k--){
-			for(int j = Y_DIM; j > 0; j--){
-				for(int i = 0; i < X_DIM; i++){
-					space[i][j][k].id = seed;
-					cout << "[" << seed << "/";
-					cout << space[i][j][k].id << "]";
+			break;
+		case 3:
+			float result;
+			srand(X_DIM*Y_DIM*Z_DIM);
+			cout << "random seeding begins" << endl;
+			for(int k = Z_DIM; k > 0; k--){
+				for(int j = Y_DIM; j > 0; j--){
+					for(int i = 0; i < X_DIM; i++){
+						result = rand() / RAND_MAX;
+
+						if(result >= 0.5){
+							space[i][j][k].id = 1;
+						}else{
+							space[i][j][k].id = 0;
+						}
+						cout << space[i][j][k].id << "]";
+					}
+					cout << "line " << j << " completed successfully" << endl;
 				}
-				cout << "line " << j << " completed successfully" << endl;
+				cout << "end of slice " << k << endl;
 			}
-			cout << "end of slice " << k << endl;
-		}
+			break;
+		default:
+			cout << "seeding begins" << endl;
+			for(int k = Z_DIM; k > 0; k--){
+				for(int j = Y_DIM; j > 0; j--){
+					for(int i = 0; i < X_DIM; i++){
+						space[i][j][k].id = seed;
+						cout << "[" << seed << "/";
+						cout << space[i][j][k].id << "]";
+					}
+					cout << "line " << j << " completed successfully" << endl;
+				}
+				cout << "end of slice " << k << endl;
+			}
+			break;
 	}
 }
 
@@ -66,6 +93,18 @@ bool display(){
 }
 
 void update(int ruleset){
+
+
+	int previous_material;
+	int neighbor_material;
+
+	bool out_of_bounds_X0 = false;
+	bool out_of_bounds_Y0 = false;
+	bool out_of_bounds_Z0 = false;
+
+	bool out_of_bounds_X1 = false;
+	bool out_of_bounds_Y1 = false;
+	bool out_of_bounds_Z1 = false;
 
 	switch(ruleset){
 
@@ -87,13 +126,6 @@ void update(int ruleset){
 
 		*/
 
-		int previous_material;
-		int neighbor_material;
-
-		bool out_of_bounds_X = false;
-		bool out_of_bounds_Y = false;
-		bool out_of_bounds_Z = false;
-
 		cout << "updating begins" << endl;
 		for(int k = Z_DIM; k > 0; k--){
 			for(int j = Y_DIM; j > 0; j--){
@@ -112,15 +144,15 @@ void update(int ruleset){
 										for(int q = -1; q <= 1; q++){
 
 											if(i+m < 0 || i+m >= X_DIM){
-												out_of_bounds_X = true;
+												out_of_bounds_X0 = true;
 											}
 
 											if(j+o < 0 || j+o >= Y_DIM){
-												out_of_bounds_Y = true;
+												out_of_bounds_Y0 = true;
 											}
 
 											if(k+q < 0 || k+q >= Z_DIM){
-												out_of_bounds_Z = true;
+												out_of_bounds_Z0 = true;
 											}
 
 											if(m==o&&o==q&&m==0){
@@ -128,7 +160,7 @@ void update(int ruleset){
 												//do nothing
 											}else{
 												//cell is considering a neighboring cell
-												if(out_of_bounds_X||out_of_bounds_Y||out_of_bounds_Z){
+												if(out_of_bounds_X0||out_of_bounds_Y0||out_of_bounds_Z0){
 													//output error instead of trying to write to the location
 													cout << "ERROR";
 												}else{
@@ -143,9 +175,9 @@ void update(int ruleset){
 												}
 											}
 
-											out_of_bounds_X = false;
-											out_of_bounds_Y = false;
-											out_of_bounds_Z = false;
+											out_of_bounds_X0 = false;
+											out_of_bounds_Y0 = false;
+											out_of_bounds_Z0 = false;
 										}
 									}
 								}
@@ -163,15 +195,15 @@ void update(int ruleset){
 										for(int r = -1; r <= 1; r++){
 
 											if(i+n < 0 || i+n >= X_DIM){
-												out_of_bounds_X = true;
+												out_of_bounds_X1 = true;
 											}
 
 											if(j+p < 0 || j+p >= Y_DIM){
-												out_of_bounds_Y = true;
+												out_of_bounds_Y1 = true;
 											}
 
 											if(k+r < 0 || k+r >= Z_DIM){
-												out_of_bounds_Z = true;
+												out_of_bounds_Z1 = true;
 											}
 
 											if(n==p&&p==r&&n==0){
@@ -179,7 +211,7 @@ void update(int ruleset){
 												//do nothing
 											}else{
 												//cell is considering a neighboring cell
-												if(out_of_bounds_X||out_of_bounds_Y||out_of_bounds_Z){
+												if(out_of_bounds_X1||out_of_bounds_Y1||out_of_bounds_Z1){
 													//output error instead of trying to write to the location
 													cout << "ERROR";
 												}else{
@@ -194,9 +226,9 @@ void update(int ruleset){
 												}
 											}
 
-											out_of_bounds_X = false;
-											out_of_bounds_Y = false;
-											out_of_bounds_Z = false;
+											out_of_bounds_X1 = false;
+											out_of_bounds_Y1 = false;
+											out_of_bounds_Z1 = false;
 										}
 									}
 								}
@@ -218,42 +250,71 @@ void update(int ruleset){
 					cout << space[i][j][k].id << "]";
 				}cout << "line " << j << " completed successfully" << endl;
 			}cout << "end of slice " << k << endl;
-		}break;
+		}
+			break;
 
 		case 2:/*
 		Heat - more work here
 		*/
 
-		break;
+			break;
 
 		default: cout << "Update(int ruleset) did not recieve a valid ruleset value" << endl;
-		break;
+			break;
 	};
 }
 
 void menu(){
-	cout << "-Options----" << endl;
-	cout << "1-Display" << endl;
-	cout << "2-Seed-the-Display" << endl;
-	cout << "3-Update-Submenu" << endl;
+	cout << "-Options---------------" << endl;
+	cout << "1-Display--------------" << endl;
+	cout << "2-Seed------Submenu----" << endl;
+	cout << "3-Update----Submenu----" << endl;
+	cout << "4-Plot------Submenu----" << endl;
 	cout << endl << endl << endl;
-	cout << "99-EXIT" << endl;
+	cout << "99-EXIT----------------" << endl;
 }
 
 void update_submenu(){
 	cout << "-Update-Options----" << endl;
-	cout << "1-Update-Once" << endl;
-	cout << "2-Update-5x" << endl;
-	cout << "3-Update-Nx" << endl;
+	cout << "1-Update-Once------" << endl;
+	cout << "2-Update-5x--------" << endl;
+	cout << "3-Update-Nx--------" << endl;
 	cout << endl << endl << endl;
-	cout << "99-EXIT" << endl;
+	cout << "99-EXIT------------" << endl;
+}
+
+void seed_submenu(){
+	cout << "-Seed-Options----------------" << endl;
+	cout << "4-seed-border-cells-with-1---" << endl;
+	cout << "3-random-seed----------------" << endl;
+	cout << "0/1-seed-all-cells-with-0/1--" << endl;
+	cout << endl << endl << endl;
+	cout << "99-EXIT----------------------" << endl;
+}
+
+void plot_submenu(){
+	cout << "-Plotting-Options----" << endl;
+	cout << "1-Plot-a-point-------" << endl;
+	cout << "2-Plot-a-line--------" << endl;
+	cout << "3-Plot-a-sphere------" << endl;
+	cout << endl << endl << endl;
+	cout << "99-EXIT--------------" << endl;
 }
 
 int main(){
 
-	cout << "-Hello and Welcome----" << RED << "v0.1" << RESET << endl;
-	cout << "-current voxel count> " << GREEN << Z_DIM*X_DIM*Y_DIM << RESET << endl;
-	//display(0);
+		cout << endl << B_BLACK << RED << 'H'
+		 		 << B_RED << BLACK << 'E'
+		 		 << B_BLACK << RED << 'L'
+		 		 << B_RED << BLACK << 'L'
+		 		 << B_BLACK << RED << 'O'
+		 		 << BLUE << "---------------";
+
+	cout << RED << "v0.1" << endl << endl;
+
+	cout << WHITE << "-current voxel count> " << GREEN << Z_DIM*X_DIM*Y_DIM 
+			<<"[x:" << X_DIM << " y:" << Y_DIM << " z:" << Z_DIM << "]" << endl;
+	cout << WHITE << "-current memory ussage> " << GREEN << X_DIM*Y_DIM*Z_DIM*sizeof(voxel) << " bytes used" << WHITE << endl << endl;
 
 	bool menu_active = true;
 	bool seeded = false;
@@ -267,21 +328,53 @@ int main(){
 			case 1: display(); 
 					break;
 
-			case 2: cout << endl << "-enter-seed-value[integer]>";
-					cin >> choice;
-					seed(choice);
-					choice = 2;
-					seeded = true;
+			case 2: //seed menu
+					while(menu_active){
+						switch(submenu_choice){
+							case 0:
+							case 1:
+								seed(submenu_choice);
+								break;
+							case 4:
+								seed(4);
+								break;
+							case 99:
+								menu_active = false;
+								break;
+							default:
+								cout << "invalid choice" << endl;
+								break;
+						}
+						seed_submenu();
+						cout << "-enter-choice> ";
+						cin >> submenu_choice;
+						if(submenu_choice == 99)
+							menu_active = false;
+					}
+
+					menu_active = true;
 					break;
+					//set up submenu for seeding
+					// cout << endl << "-enter-seed-value[integer]>";
+					// cin >> choice;
+					// seed(choice);
+					// choice = 2;
+					// seeded = true;
+					// break;
 
 			case 3: while(menu_active){
 						switch(submenu_choice){
-							case 0: break;
-							case 1: break;//update one time
-							case 2: break;//update five times
-							case 3: break;//update a user specified number of times
-							case 99:menu_active = false;
-									break;
+							case 0: 
+								break;
+							case 1: 
+								break;//update one time
+							case 2: 
+								break;//update five times
+							case 3: 
+								break;//update a user specified number of times
+							case 99:
+								menu_active = false;
+								break;
 						};
 						update_submenu();
 						cout << "-enter-choice> ";
@@ -291,6 +384,31 @@ int main(){
 					}
 					menu_active=true;
 					break;
+			case 4: //set up plot submenu
+					while(menu_active){
+						switch(submenu_choice){
+							case 1:
+								//plot a point
+								break;
+							case 2:
+								//plot a line
+								break;
+							case 99:
+								menu_active = false;
+								break;
+							default:
+								cout << "invalid choice" << endl;
+								break;
+						}
+						plot_submenu();
+						cout << "-enter-choice> ";
+						cin >> submenu_choice;
+						if(submenu_choice == 99)
+							menu_active = false;
+					}
+
+					menu_active = true;
+					break;
 
 			case 99:menu_active = false; 
 					break;
@@ -299,8 +417,18 @@ int main(){
 					break;
 		};
 		cout << endl << endl << endl;
-		menu();
-		cout << "-enter-choice> ";
-		cin >> choice;
+		if(menu_active){
+			menu();
+			cout << "-enter-choice> ";
+			cin >> choice;
+		}
 	}
+	cout << endl << endl << B_BLACK << RED << 'G' 
+						 << B_RED << BLACK << 'O'
+						 << B_BLACK << RED << 'O'
+						 << B_RED << BLACK << 'D'
+						 << B_BLACK << RED << 'B'
+						 << B_RED << BLACK << 'Y'
+						 << B_BLACK << RED << 'E'
+						 << RESET << WHITE << endl;
 }
