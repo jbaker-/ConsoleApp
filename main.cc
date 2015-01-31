@@ -4,9 +4,9 @@
 #include "colors.h"
 using namespace std;
 
-#define X_DIM 80
-#define Y_DIM 30
-#define Z_DIM 30
+#define X_DIM 20
+#define Y_DIM 10
+#define Z_DIM 10
 
 struct voxel{
 	int id;
