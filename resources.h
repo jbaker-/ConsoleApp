@@ -117,14 +117,17 @@ void Menu::go(){
 										break;
 
 									case 1://display case 1
+										display(1);
 										subsubmenu_choice = 0;
 										break;
 
 									case 2://display case 2
+										display(2);
 										subsubmenu_choice = 0;
 										break;
 
 									case 3://display case 3
+										display(3);
 										subsubmenu_choice = 0;
 										break;
 
@@ -287,7 +290,7 @@ int Menu::draw_options(){
 	cout <<"3-Draw-a-Line- - - - - - - - - - -" << endl;
 	cout <<"4-Draw-a-Sphere- - - - - - - - - -" << endl;
 	cout <<" - - - - - - - - - - - - - - - - -" << endl;
-	cout <<"99-Exit- - - - - - - - - - - - - -" << endl;
+	cout <<"99-up- - - - - - - - - - - - - - -" << endl;
 	cout <<"select option" << endl;
 	cout <<"> ";
 	cin >> choice;
@@ -310,7 +313,7 @@ int Menu::display_options(){
 	cout <<"2-Output-view-2-(slices-along-z) -" << endl;
 	cout <<"3-Output-view-3-(slices-along-y) -" << endl;
 	cout <<" - - - - - - - - - - - - - - - - -" << endl;
-	cout <<"99-Exit- - - - - - - - - - - - - -" << endl;
+	cout <<"99-up- - - - - - - - - - - - - - -" << endl;
 	cout <<"select option" << endl;
 	cout <<"> ";
 	cin >> choice;
@@ -325,7 +328,7 @@ int Menu::seed_options(){
 	cout <<" - - - - - - - - - - - - - - - - -" << endl;
 	cout <<"1-Outer-Layer-of-9's - - - - - - -" << endl;
 	cout <<" - - - - - - - - - - - - - - - - -" << endl;
-	cout <<"99-Exit- - - - - - - - - - - - - -" << endl;
+	cout <<"99-up- - - - - - - - - - - - - - -" << endl;
 	cout <<"select option" << endl;
 	cout <<"> ";
 	cin >> choice;
@@ -342,13 +345,53 @@ int Menu::update_options(){
 	cout <<"2-Update-5-times - - - - - - - - -" << endl;
 	cout <<"3-Update-N-times - - - - - - - - -" << endl;
 	cout <<" - - - - - - - - - - - - - - - - -" << endl;
-	cout <<"99-Exit- - - - - - - - - - - - - -" << endl;
+	cout <<"99-up- - - - - - - - - - - - - - -" << endl;
 	cout <<"select option" << endl;
 	cout <<"> ";
 	cin >> choice;
 	return choice;
 }
 
-void display(int view){
+void Menu::display(int view){
 	//display function
+	voxel temp;
+	switch(view){
+		case 1://I:(z:0 -> max) / M:(y:max -> 0) / O:(x:0 -> max)
+			for(int k = 0; k < x; k++){
+				for(int j = (y-1); j >= 0; j--){
+					for(int i = 0; i < z; i++){
+						temp = *access(k,j,i);
+						cout << temp.id;
+					}cout << endl;
+				}cout << endl << endl;
+			}
+			break;
+
+		case 2://I:(x:0 -> max) / M:(y:max -> 0) / O:(z:max -> 0)
+			for(int l = (z-1); l >= 0; l--){
+				for(int m = (y-1); m >= 0; m--){//fix
+					for(int n = 0; n < x; n++){
+						temp = *access(n,m,l);
+						cout << temp.id;
+					}cout << endl;
+				}cout << endl << endl;
+			}
+			break;
+
+		case 3://I:(x:0 -> max) / M:(z:0 -> max) / O:(y:max -> 0)
+			for(int o = (y-1); o >= 0; o--){
+				for(int p = 0; p < z; p++){
+					for(int q = 0; q < x; q++){
+						temp = *access(q,o,p);
+						cout << temp.id;
+					}cout << endl;
+				}cout << endl << endl;
+			}
+			break;
+
+		default:
+			cout << endl << "Invalid parameter view: " << view 
+				 << " passed to display(int view)" << endl;
+			break;
+	}
 }

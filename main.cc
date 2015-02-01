@@ -6,7 +6,7 @@ using namespace std;
 
 #define X_DIM 30
 #define Y_DIM 15
-#define Z_DIM 15
+#define Z_DIM 45
 
 int main(){
 
