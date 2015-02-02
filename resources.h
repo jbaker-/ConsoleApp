@@ -136,6 +136,12 @@ void Menu::go(){
 										subsubmenu_active = false;
 										break;
 
+									case 999: //global quit
+										subsubmenu_active = 0;
+										submenu_active = 0;
+										menu_active = 0;
+										break;
+
 									default:
 										subsubmenu_choice = 0;
 										cout << endl << "Invalid, returning to menu" << endl;
@@ -163,6 +169,12 @@ void Menu::go(){
 
 						case 99:
 							submenu_active = false;
+							break;
+
+						case 999: //global quit
+							subsubmenu_active = 0;
+							submenu_active = 0;
+							menu_active = 0;
 							break;
 
 						default:
@@ -245,6 +257,12 @@ void Menu::go(){
 
 				menu_active = false;
 				cout << endl << "Goodbye" << endl;
+				break;
+
+			case 999: //global quit
+				subsubmenu_active = 0;
+				submenu_active = 0;
+				menu_active = 0;
 				break;
 
 			default:

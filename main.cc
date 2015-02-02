@@ -4,9 +4,9 @@
 
 using namespace std;
 
-#define X_DIM 10
-#define Y_DIM 15
-#define Z_DIM 20
+#define X_DIM 100
+#define Y_DIM 100
+#define Z_DIM 100
 
 int main(){
 
