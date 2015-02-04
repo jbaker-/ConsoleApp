@@ -4,19 +4,51 @@
 
 using namespace std;
 
-#define X_DIM 100
-#define Y_DIM 100
-#define Z_DIM 100
+#define X_DIM 40
+#define Y_DIM 40
+#define Z_DIM 40
 
 int main(){
 
-	Menu main(X_DIM,Y_DIM,Z_DIM); //needs to get pointer to 
+	Menu main(X_DIM,Y_DIM,Z_DIM);
+	Timer temp;
+	int time;
+	int days;
+	int hours;
+	int minutes;
+	int seconds;
 
-	cout << B_BLACK << WHITE << "init" << endl;
+	temp.start();
+
+	cout << B_BLACK << WHITE; //set color
+	if(DEBUG){
+		cout << "init" << endl; //check that color was set
+	}
 
 	main.go();
 
-	cout << RESET << endl << "end" << endl;
+	cout << RESET;//set back to terminal defualt colors
+	if(DEBUG){
+		cout << endl << "end" << endl; //check color
+	}
+
+	temp.stop();
+	time = temp.duration_sec();
+
+	if(DEBUG){
+		cout << time << endl;
+	}
+
+	seconds = time % 60;
+	time /= 60;
+	minutes = time % 60;
+	time /= 60;
+	hours = time % 24;
+	time /= 24;
+	days = time;
+
+	cout << "Program active for " << days << " days " << hours << " hours " 
+		 << minutes << " minutes " << seconds << " seconds " << endl;
 
 	return 0;
 }
