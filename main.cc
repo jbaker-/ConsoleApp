@@ -5,8 +5,8 @@
 using namespace std;
 
 #define X_DIM 40
-#define Y_DIM 40
-#define Z_DIM 40
+#define Y_DIM 20
+#define Z_DIM 20
 
 int main(){
 
@@ -48,7 +48,7 @@ int main(){
 	days = time;
 
 	cout << "Program active for " << days << " days " << hours << " hours " 
-		 << minutes << " minutes " << seconds << " seconds " << endl;
+		 << minutes << " minutes " << seconds << " seconds ( " << temp.duration() << " milliseconds)" << endl;
 
 	return 0;
 }

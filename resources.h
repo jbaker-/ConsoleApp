@@ -8,8 +8,8 @@
 
 #define DEBUG false
 
-//this class is from http://stackoverflow.com/questions/3797708/millisecond-accurate-benchmarking-in-c
-//and was posted without any comments by ccSadegh
+//timer class is from http://stackoverflow.com/questions/3797708/millisecond-accurate-benchmarking-in-c
+//and was posted without any comments by ccSadegh 
 
 class Timer{
     timeval timer[2];
@@ -54,8 +54,7 @@ class Timer{
         }
 
         return static_cast<int>(secs + usecs / 1000000.0 + 0.5);
-    }
-};
+    }};
 
 struct voxel{
 
@@ -292,6 +291,7 @@ void Menu::go(){
 						case 1:
 						case 2:
 						case 3:
+						case 4:
 							//seed outer layer with special value
 							seed(submenu_choice);
 							submenu_choice = 0;
@@ -454,6 +454,7 @@ int Menu::seed_options(){
 	cout <<"1-Outer-Layer-of-1's - - - - - - -" << endl;
 	cout <<"2-Seed-Zero-faces-only - - - - - -" << endl;
 	cout <<"3-Seed-Max-faces-only- - - - - - -" << endl;
+	cout <<"4-Game of-life setup - - - - - - -" << endl;
 	cout <<" - - - - - - - - - - - - - - - - -" << endl;
 	cout <<"99-up- - - - - - - - - - - - - - -" << endl;
 	cout <<"select option" << endl;
@@ -480,14 +481,20 @@ int Menu::update_options(){
 }
 
 void Menu::seed(int seed){
+	glm::vec3 temp;
+
+	srand(sizeof(seed)*seed);
+
 	switch(seed){
 		case 1://outer layer of ones - some strange artifacts exist here, more work to do
 			for(int x1 = 0; x1 < x; x1++){
 				for(int y1 = 0; y1 < y; y1++){
 					for(int z1 = 0; z1 < z; z1++){
-						if(x1 == 0 || x1 == (x-1) ||
-						   y1 == 0 || y1 == (y-1) ||
-						   z1 == 0 || z1 == (z-1) ){
+						temp = access(x1,y1,z1)->position;
+
+						if(temp.x == 0 || temp.x == (x-1) ||
+						   temp.y == 0 || temp.y == (y-1) ||
+						   temp.z == 0 || temp.z == (z-1) ){
 							access(x1,y1,z1)->id = 1;
 							//cout << x1 <<" "<< y1 <<" "<< z1 << endl << endl;
 						}else{
@@ -502,9 +509,11 @@ void Menu::seed(int seed){
 			for(int x1 = 0; x1 < x; x1++){
 				for(int y1 = 0; y1 < y; y1++){
 					for(int z1 = 0; z1 < z; z1++){
-						if(x1 == 0 ||
-						   y1 == 0 ||
-						   z1 == 0 ){
+						temp = access(x1,y1,z1)->position;
+
+						if(temp.x == 0 ||
+						   temp.y == 0 ||
+						   temp.z == 0 ){
 							access(x1,y1,z1)->id = 1;
 							//cout << x1 <<" "<< y1 <<" "<< z1 << endl << endl;
 						}else{
@@ -519,13 +528,40 @@ void Menu::seed(int seed){
 			for(int x1 = 0; x1 < x; x1++){
 				for(int y1 = 0; y1 < y; y1++){
 					for(int z1 = 0; z1 < z; z1++){
-						if(x1 == (x-1) ||
-						   y1 == (y-1) ||
-						   z1 == (z-1) ){
+
+						temp = access(x1,y1,z1)->position;
+
+						if(temp.x == (x-1) ||
+						   temp.y == (y-1) ||
+						   temp.z == (z-1) ){
 							access(x1,y1,z1)->id = 1;
 							//cout << x1 <<" "<< y1 <<" "<< z1 << endl << endl;
 						}else{
 							access(x1,y1,z1)->id = 0;
+						}
+					}
+				}
+			}
+			break;
+
+		case 4://outer layer of 2's - random 0/1 interior game of life setup
+			for(int x1 = 0; x1 < x; x1++){
+				for(int y1 = 0; y1 < y; y1++){
+					for(int z1 = 0; z1 < z; z1++){
+
+						temp = access(x1,y1,z1)->position;
+
+						if(temp.x == 0 || temp.x == (x-1) ||
+						   temp.y == 0 || temp.y == (y-1) ||
+						   temp.z == 0 || temp.z == (z-1) ){
+							access(x1,y1,z1)->id = 2;
+							//cout << x1 <<" "<< y1 <<" "<< z1 << endl << endl;
+						}else{
+							if(rand()/RAND_MAX > 0.5){
+								access(x1,y1,z1)->id = 1;
+							}else{
+								access(x1,y1,z1)->id = 0;
+							}
 						}
 					}
 				}
